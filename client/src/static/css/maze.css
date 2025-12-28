@@ -1,36 +1,26 @@
+/* Constrain the plot inside the Dotplot card */
 #chart {
   position: relative;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 100%;
+  max-width: 900px;
+  height: min(70vh, 900px);
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+#svg,
+#canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 #svg {
-  position: absolute;
   z-index: 1;
   pointer-events: none;
 }
 
-#canvas {
-  position: absolute;
-}
-
-.modal-dialog {
-  width: 90%;
-  max-width: 90%;
-  height: 90%;
-  padding: 0;
-  margin: 0;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) !important;
-}
-
-.modal-content {
-  height: 100%;
-  padding: 0;
-}
-
+/* Dropzone styling */
 .dropzone {
   border: 1px dashed #ced4da;
   border-radius: 0.25rem;

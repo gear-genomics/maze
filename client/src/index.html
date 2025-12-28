@@ -15,6 +15,23 @@
     <link rel="stylesheet" href="https://www.gear-genomics.com/libs/fontawesome-free-6.2.1-web/css/all.min.css">
     <link rel="stylesheet" href="./static/css/gear.css" />
     <link rel="stylesheet" href="./static/css/maze.css" />
+    <style>
+      /* Constrain the dotplot to the Results tab */
+      #chart {
+        position: relative;
+        width: 100%;
+        max-width: 900px;
+        height: min(70vh, 900px);
+        overflow: hidden;
+        margin: 0 auto;
+      }
+      #chart svg,
+      #chart canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    </style>
   </head>
 
   <body>
@@ -30,7 +47,7 @@
       <div class="container">
         <h1 class="display-4 app-name">maze</h1>
         <p class="lead">Visually align two DNA sequences.</p>
-	<a
+        <a
           class="plain"
           href="https://www.gear-genomics.com/contact"
           target="_blank"
@@ -38,7 +55,7 @@
           <i class="fas fa-question"></i> Get help
         </a>
         ·
-	<a
+        <a
           class="plain"
           href="https://www.gear-genomics.com/citation"
           target="_blank"
@@ -57,119 +74,178 @@
     </header>
 
     <main class="container">
-      <form>
-        <div class="form-group">
-          <label for="input-k">Match length (bp)</label>
-          <input
-            class="form-control"
-            id="input-k"
-            type="number"
-            value="10"
-            min="4"
-          />
-        </div>
-        <div class="alert alert-info" role="alert">
-          <i class="fas fa-info-circle"></i>
-          Enter sequences into the text boxes below or drag-and-drop a file onto
-          the drop areas.
-        </div>
-        <div class="form-group">
-          <i class="fas fa-dna"></i>
-          <label>Sequence 1</label>
-          <button
-            id="btn-revcom-reference"
-            type="button"
-            class="btn btn-sm btn-outline-secondary ml-2"
-          >
-            <i class="fas fa-exchange-alt"></i>
-            <span>Reverse complement</span>
-          </button>
-          <div class="form-row">
-            <div class="col-md-10">
-              <textarea
-                class="form-control text-monospace"
-                id="textarea-reference"
-                spellcheck="false"
-                rows="5"
-                placeholder="Enter sequence..."
-              ></textarea>
-            </div>
-            <div class="col-md-2">
-              <div class="dropzone" id="dropzone-reference">
-                <div class="dropzone__content">
-                  <i class="fas fa-parachute-box"></i>
-                  Drop file (raw or FASTA, text or gzip)
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
-          <i class="fas fa-dna"></i>
-          <label>Sequence 2</label>
-          <button
-            id="btn-revcom-query"
-            type="button"
-            class="btn btn-sm btn-outline-secondary ml-2"
-          >
-            <i class="fas fa-exchange-alt"></i>
-            <span>Reverse complement</span>
-          </button>
-          <div class="form-row">
-            <div class="col-md-10">
-              <textarea
-                class="form-control text-monospace"
-                id="textarea-query"
-                spellcheck="false"
-                rows="5"
-                placeholder="Enter sequence..."
-              ></textarea>
-            </div>
-            <div class="col-md-2">
-              <div class="dropzone" id="dropzone-query">
-                <div class="dropzone__content">
-                  <i class="fas fa-parachute-box"></i>
-                  Drop file (raw or FASTA, text or gzip)
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-      <button
-        type="submit"
-        class="btn btn-outline-primary"
-        id="btn-submit"
-        data-toggle="modal"
-        data-target="#result-modal"
-      >
-        <i class="fas fa-rocket" style="margin-right: 5px;"></i>
-        Launch Analysis
-      </button>
-      <button type="submit" class="btn btn-outline-primary" id="btn-example">
-        <i class="fas fa-eye" style="margin-right: 5px;"></i>
-        Load Example
-      </button>
-    </main>
+      <!-- Tabs -->
+      <ul class="nav nav-fill mb-4" id="mainTab">
+        <li class="nav-item">
+          <a class="nav-link active" href="#input-tab">Input</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#result-tab" id="link-results">Results</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#help-tab" id="link-help">Help</a>
+        </li>
+      </ul>
 
-    <div id="result-modal" class="modal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
+      <div class="tab-content" id="main-tabs">
+        <!-- Input tab -->
+        <div class="tab-pane show active" id="input-tab">
+          <form>
+            <div class="form-group">
+              <label for="input-k">Match length (bp)</label>
+              <input
+                class="form-control"
+                id="input-k"
+                type="number"
+                value="10"
+                min="4"
+              />
+            </div>
+            <div class="alert alert-info" role="alert">
+              <i class="fas fa-info-circle"></i>
+              Enter sequences into the text boxes below or drag-and-drop a file
+              onto the drop areas.
+            </div>
+            <div class="form-group">
+              <i class="fas fa-dna"></i>
+              <label>Sequence 1</label>
+              <button
+                id="btn-revcom-reference"
+                type="button"
+                class="btn btn-sm btn-outline-secondary ml-2"
+              >
+                <i class="fas fa-exchange-alt"></i>
+                <span>Reverse complement</span>
+              </button>
+              <div class="form-row">
+                <div class="col-md-10">
+                  <textarea
+                    class="form-control text-monospace"
+                    id="textarea-reference"
+                    spellcheck="false"
+                    rows="5"
+                    placeholder="Enter sequence..."
+                  ></textarea>
+                </div>
+                <div class="col-md-2">
+                  <div class="dropzone" id="dropzone-reference">
+                    <div class="dropzone__content">
+                      <i class="fas fa-parachute-box"></i>
+                      Drop file (raw or FASTA, text or gzip)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <i class="fas fa-dna"></i>
+              <label>Sequence 2</label>
+              <button
+                id="btn-revcom-query"
+                type="button"
+                class="btn btn-sm btn-outline-secondary ml-2"
+              >
+                <i class="fas fa-exchange-alt"></i>
+                <span>Reverse complement</span>
+              </button>
+              <div class="form-row">
+                <div class="col-md-10">
+                  <textarea
+                    class="form-control text-monospace"
+                    id="textarea-query"
+                    spellcheck="false"
+                    rows="5"
+                    placeholder="Enter sequence..."
+                  ></textarea>
+                </div>
+                <div class="col-md-2">
+                  <div class="dropzone" id="dropzone-query">
+                    <div class="dropzone__content">
+                      <i class="fas fa-parachute-box"></i>
+                      Drop file (raw or FASTA, text or gzip)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
           <button
-            type="button"
-            class="close"
-            data-dismiss="modal"
-            aria-label="Close"
+            type="submit"
+            class="btn btn-outline-primary"
+            id="btn-submit"
           >
-            <span aria-hidden="true">&times;</span>
+            <i class="fas fa-rocket" style="margin-right: 5px;"></i>
+            Launch Analysis
           </button>
-          <div id="chart">
-            <svg id="svg"></svg>
-            <canvas id="canvas"></canvas>
+          <button type="submit" class="btn btn-outline-primary" id="btn-example">
+            <i class="fas fa-eye" style="margin-right: 5px;"></i>
+            Load Example
+          </button>
+        </div>
+
+        <!-- Results tab -->
+        <div class="tab-pane" id="result-tab">
+          <div id="result-info" class="alert alert-info d-none" role="alert">
+            <i class="fas fa-spinner spinner"></i>
+            Analysis is running, please be patient.
           </div>
+          <div id="result-error" class="alert alert-danger d-none" role="alert">
+            <i class="fas fa-fire"></i>
+            <span id="error-message"></span>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Dotplot</h5>
+                <div>
+                  <button
+                    class="btn btn-sm btn-outline-secondary mr-2"
+                    id="btn-download-png"
+                    type="button"
+                  >
+                    <i class="fas fa-download"></i> Download PNG
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-secondary"
+                    id="btn-download-svg"
+                    type="button"
+                  >
+                    <i class="fas fa-download"></i> Download SVG
+                  </button>
+                </div>
+              </div>
+              <div id="chart">
+                <svg id="svg"></svg>
+                <canvas id="canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Help tab -->
+        <div class="tab-pane" id="help-tab">
+          <h4>Application Description</h4>
+          <p>
+            maze visualizes exact matches between two DNA sequences as a
+            dotplot. Longer match lengths reduce noise; shorter lengths reveal
+            smaller local matches.
+          </p>
+          <h4>Usage</h4>
+          <ul>
+            <li>Enter or paste two DNA sequences (FASTA headers are supported).</li>
+            <li>Set the match length and click <em>Launch Analysis</em>.</li>
+            <li>Use zoom/pan on the plot to inspect regions of interest.</li>
+            <li>Download the visualization as PNG or SVG from the Results tab.</li>
+          </ul>
+          <h4>Accepted Input</h4>
+          <p>
+            Raw DNA sequences or FASTA files (plain text or gzip). Only the DNA
+            alphabet {A, C, G, T} is accepted.
+          </p>
         </div>
       </div>
-    </div>
+    </main>
 
     <footer>
       <div class="container">
