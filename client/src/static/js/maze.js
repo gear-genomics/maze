@@ -1,6 +1,7 @@
 import { axisLeft, axisTop } from 'd3-axis'
 import { scaleLinear } from 'd3-scale'
-import { event, select } from 'd3-selection'
+import { select } from 'd3-selection'
+import { interrupt } from 'd3-transition'
 import { zoom, zoomIdentity } from 'd3-zoom'
 import kmers from 'k-mers'
 import pako from 'pako'
@@ -130,7 +131,7 @@ function visualize(k, seq1, seq2) {
   const zoomBehavior = zoom()
     .scaleExtent([1, Infinity])
     .translateExtent([[0, 0], [innerWidth, innerHeight]])
-    .on('zoom', () => {
+    .on('zoom', event => {
       draw(event.transform)
     })
 
