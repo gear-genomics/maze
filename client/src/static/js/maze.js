@@ -57,9 +57,15 @@ function run() {
   let reference = getSequence(textareaReference.value, 'Reference')
   let query = getSequence(textareaQuery.value, 'Query')
   let k = parseInt(inputK.value, 10)
-  if (reference.seq && query.seq && Number.isInteger(k) && k > 0) {
-    visualize(k, reference.seq, query.seq)
+  if (!reference.seq || !query.seq || !Number.isInteger(k) || k <= 0) {
+    showError('Error: please provide 2 input sequences.')
+    return
   }
+  if (!isDna(reference.seq) || !isDna(query.seq)) {
+    showError('Error: sequences must contain only the DNA alphabet {A, C, G, T}.')
+    return
+  }
+  visualize(k, reference.seq, query.seq)
 }
 
 function visualize(k, seq1, seq2) {
@@ -315,7 +321,7 @@ function hideElement(element) {
 
 function isDna(seq) {
   // allow newlines
-  const dnaPat = /^[acgt\n]+$/i
+  const dnaPat = /^[ACGT\n]+$/i
   return dnaPat.test(seq)
 }
 
